@@ -67,15 +67,19 @@ class Description extends Module
         $this->context->controller->addJS(($this->_path).'views/js/front_description.js', 'all');
     }
 
-    public function hookDisplayAdminProductsExtra($params) {
+    public function hookDisplayAdminProductsExtra($params)
+    {
         $product = new Product((int)Tools::getValue('id_product'));
+        
         if (Validate::isLoadedObject($product)) {   
             $html = '';            
+            
             if (Tools::isSubmit('SUBMIT_ADD_DESCRIPTION')) {
                 Configuration::updateValue('PS_ADD_DESCRIPTION', (string)Tools::getValue('PS_ADD_DESCRIPTION'));
                 $query = 'UPDATE ' . _DB_PREFIX_. 'product_lang' . ' SET ' . 
-                'add_description' . ' = '. "'" . pSQL(Configuration::get('PS_ADD_DESCRIPTION')) . "'" . ' WHERE ' . 
-                'id_product' . ' = ' . (int)$product->id;
+                    'add_description' . ' = '. "'" . pSQL(Configuration::get('PS_ADD_DESCRIPTION')) . "'" . ' WHERE ' . 
+                    'id_product' . ' = ' . (int)$product->id;
+                
                 if (Db::getInstance()->Execute($query)) {
                     $html .= $this->displayConfirmation($this->l('Product updated'));
                 } else {
@@ -90,21 +94,26 @@ class Description extends Module
                 // }
             } else {
                 $p_add_desc = Db::getInstance()->getRow('
-                SELECT add_description FROM ' ._DB_PREFIX_. 'product_lang WHERE id_product = ' . (int)$product->id);
+                    SELECT add_description FROM ' ._DB_PREFIX_. 'product_lang WHERE id_product = ' . (int)$product->id);
                 Configuration::updateValue('PS_ADD_DESCRIPTION', $p_add_desc['add_description']);
             }
+            
             return $html.$this->renderForm((int)$product->id);
         }
     }
 
-    public function hookDisplayRightColumnProduct() {
+    public function hookDisplayRightColumnProduct() 
+    {    
         $product = new Product((int)Tools::getValue('id_product'));
+        
         if (Validate::isLoadedObject($product)) {
             $id_product = (int)$product->id;
+            
             if (Configuration::get('PS_ADD_DESCRIPTION')) {
                 $p_add_desc = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow('
-                SELECT add_description FROM ' . _DB_PREFIX_ . 'product_lang 
-                WHERE id_product = ' . $id_product);
+                    SELECT add_description FROM ' . _DB_PREFIX_ . 'product_lang 
+                    WHERE id_product = ' . $id_product);
+                
                 if (isset($p_add_desc['add_description'])) {
                     $add_description = $p_add_desc['add_description'];
                     $html = '';
